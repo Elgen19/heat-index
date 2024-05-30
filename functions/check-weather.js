@@ -49,7 +49,7 @@ async function checkWeatherAndSendNotification() {
         const message = {
           notification: {
             title: 'Heat Alert',
-            body: `The current heat index is ${heatIndex.toFixed(2)}°C, prolonged exposure to heat can result to heat cramps!`
+            body: `The current heat index is ${heatIndex.toFixed(1)}°C, prolonged exposure to heat can result to heat cramps!`
           },
           tokens: registrationTokens // Send notification to all registered devices
         };
