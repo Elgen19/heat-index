@@ -1,0 +1,7 @@
+[build]
+  functions = "functions"
+
+[[redirects]]
+  from = "/weather"
+  to = "/.netlify/functions/check-weather"
+  status = 200
