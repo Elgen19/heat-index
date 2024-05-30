@@ -64,10 +64,15 @@ async function checkWeatherAndSendNotification() {
         }
       }
     }
+
+    // Return weather data
+    return { temp, humidity, heatIndex };
   } catch (error) {
     console.error('Error fetching weather data:', error);
+    throw new Error('Error fetching weather data');
   }
 }
+
 
 // Netlify function handler
 const handler = async (event, context) => {
@@ -92,15 +97,15 @@ const handler = async (event, context) => {
         body: JSON.stringify({ message: 'Error storing token' })
       };
     }
-  } else if (event.httpMethod === 'GET') {
+  } else if (event.httpMethod === 'GET' && event.path === '/.netlify/functions/check-weather') {
     console.log('Checking weather and sending notifications if necessary');
-    await checkWeatherAndSendNotification();
+    const weatherData = await checkWeatherAndSendNotification();
     return {
       statusCode: 200,
-      body: 'Weather check completed'
+      body: JSON.stringify(weatherData)
     };
   } else {
-    console.log('Invalid HTTP method:', event.httpMethod);
+    console.log('Invalid HTTP method or path:', event.httpMethod, event.path);
     return {
       statusCode: 405,
       body: 'Method Not Allowed'
