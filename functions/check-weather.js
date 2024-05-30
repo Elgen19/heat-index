@@ -73,11 +73,33 @@ async function checkWeatherAndSendNotification() {
   }
 }
 
+// Function to fetch weather data without sending notification
+async function fetchWeatherDataOnly() {
+  const apiKey = process.env.OPENWEATHER_API_KEY;
+  const city = 'Cebu'; // Replace with your city
+  const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+  console.log('Fetching weather data from OpenWeather API');
+  try {
+    const response = await axios.get(url);
+    const { temp } = response.data.main;
+    const { humidity } = response.data.main;
+
+    const heatIndex = calculateHeatIndex(temp, humidity);
+    console.log(`Current Heat Index: ${heatIndex}°C`);
+
+    // Return weather data
+    return { temp, humidity, heatIndex };
+  } catch (error) {
+    console.error('Error fetching weather data:', error);
+    throw new Error('Error fetching weather data');
+  }
+}
 
 // Netlify function handler
 const handler = async (event, context) => {
   console.log('Received event:', event);
-  if (event.httpMethod === 'POST' && event.path === '/.netlify/functions/check-weather') {
+  if (event.httpMethod === 'POST' && event.path === '/.netlify/functions/register-token') {
     const { token } = JSON.parse(event.body);
     console.log('Received token:', token);
 
@@ -100,6 +122,13 @@ const handler = async (event, context) => {
   } else if (event.httpMethod === 'GET' && event.path === '/.netlify/functions/check-weather') {
     console.log('Checking weather and sending notifications if necessary');
     const weatherData = await checkWeatherAndSendNotification();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(weatherData)
+    };
+  } else if (event.httpMethod === 'GET' && event.path === '/.netlify/functions/get-weather') {
+    console.log('Fetching weather data without sending notifications');
+    const weatherData = await fetchWeatherDataOnly();
     return {
       statusCode: 200,
       body: JSON.stringify(weatherData)
