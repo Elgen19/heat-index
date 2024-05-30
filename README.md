@@ -1,5 +1,5 @@
 *** App Breakdown ***
-This project serves as a serverless endpoint for checking weather conditions in Cebu city. 
+\nThis project serves as a serverless endpoint for checking weather conditions in Cebu city. 
 Specifically, it calculates the heat index in Celsius and sends a message using Firebase Cloud Messaging to produce a notification in an Android device if the heat index is above 32 degress Celsius.
 This project uses OpenWeather API to calculate the heat index.
 Firebase Cloud Messaging using Firebase Admin SDK is used to customize the notification.
